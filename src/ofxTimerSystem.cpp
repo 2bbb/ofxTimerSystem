@@ -6,53 +6,66 @@
 //
 
 #include "ofxTimerSystem.h"
-#include "ofxTimer.h"
+#include "ofxTimerModule.h"
 
 ofxTimerSystem::ofxTimerSystem() {
     startThread(true, false);
 }
 
-void ofxTimerSystem::addTimer(ofxTimerRef timer) {
+void ofxTimerSystem::addTimer(ofxTimerModuleWrapperRef timer) {
     if(sharedInstance == NULL) {
         sharedInstance = new ofxTimerSystem();
     }
+    sharedInstance->addTimerWithLock(timer);
+}
+
+void ofxTimerSystem::addTimerWithLock(ofxTimerModuleWrapperRef timer) {
     timers.push_back(timer);
 }
 
-void ofxTimerSystem::removeTimer(ofxTimerRef timer) {
-    if(sharedInstance == NULL) {
-        sharedInstance = new ofxTimerSystem();
-    }
-    Timers::iterator it = remove(timers.begin(), timers.end(), timer);
-    timers.erase(it, timers.end());
+void ofxTimerSystem::removeTimer(ofxTimerModuleWrapperRef timer) {
+    removeTimer(timer.get());
 }
 
-void ofxTimerSystem::removeTimer(ofxTimer *timer) {
+void ofxTimerSystem::removeTimer(ofxTimerModuleWrapper *timer) {
     if(sharedInstance == NULL) {
         sharedInstance = new ofxTimerSystem();
     }
+    sharedInstance->removeTimerWithLock(timer);
+}
+
+void ofxTimerSystem::removeTimerWithLock(ofxTimerModuleWrapper *timer) {
     Timers::iterator it = timers.begin();
-    for(; it != timers.begin(); it++) {
-        if(it->get() == timer) timers.erase(it);
+    for(; it != timers.end(); it++) {
+        if(it->get() == timer) {
+            it = timers.erase(it);
+        }
     }
 }
 
 void ofxTimerSystem::threadedFunction() {
     Timers::iterator it;
-    while(true) {
+    while(isThreadRunning()) {
         if(timers.size()) {
-            lock();
             unsigned long long currentTime = ofGetElapsedTimeMillis();
             
             for(it = timers.begin(); it != timers.end(); it++) {
-                if((*it)->fire(currentTime)) {
+                lock();
+                (*it)->fire(currentTime);
+                unlock();
+            }
+            
+            for(it = timers.begin(); it != timers.end(); it++) {
+                lock();
+                if((*it)->timer != NULL && !(*it)->bAlive()) {
+                    (*it)->clean();
                     it = timers.erase(it);
                     if(it == timers.end()) break;
                 }
+                unlock();
             }
-            unlock();
         }
-        ofSleepMillis(1);
+        ofSleepMillis(10);
     }
 }
 

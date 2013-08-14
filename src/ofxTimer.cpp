@@ -6,94 +6,42 @@
 //
 
 #include "ofxTimer.h"
+#include "ofxTimerModule.h"
 #include "ofxTimerSystem.h"
-#include "ofxSetTimeoutThread.h"
-
-ofxTimerModule::ofxTimerModule(unsigned int fireDuration, unsigned long long startTime, bool isOnce) {
-    this->fireDuration = fireDuration;
-    this->remainTime = fireDuration;
-    this->startTime = startTime;
-    this->isOnce = isOnce;
-    this->isRunning = true;
-}
-
-ofxTimerModule::~ofxTimerModule() {
-    ofLogWarning() << "timer module destructed";
-}
-
-bool ofxTimerModule::fire(unsigned long long &currentTime) {
-    bool isFired = false;
-    if(isRunning && (startTime + fireDuration <= currentTime)) {
-        fireBody();
-        isFired = true;
-        startTime = currentTime;
-    }
-    return isOnce && isFired;
-}
 
 ofxTimer::ofxTimer() {
-    this->timer = NULL;
-    mute = false;
 }
 
-ofxTimer::ofxTimer(ofxTimerModule *timer) {
-    this->timer = timer;
-    mute = false;
+ofxTimer::ofxTimer(ofxTimerModuleWrapperRef _wrapper) {
+    wrapper = _wrapper;
+    ofxTimerSystem::addTimer(wrapper);
 }
 
-ofxTimer::ofxTimer(const ofxTimer &t) {
-    this->timer = t.timer;
-    mute = false;
+ofxTimer &ofxTimer::operator=(const ofxTimer &timer) {
+    wrapper = timer.wrapper;
 }
 
-ofxTimer::~ofxTimer() {
-    ofLogWarning() << "timer destructed";
+inline bool ofxTimer::bAlive() const {
+    return wrapper->timer != NULL;
+};
+
+inline void ofxTimer::stop() {
+    return wrapper->stop();
 }
 
-ofxTimer &ofxTimer::operator=(const ofxTimer &t) {
-    mute = false;
-    this->timer = t.timer;
-    return *this;
+inline void ofxTimer::pause() {
+    return wrapper->pause();
 }
 
-bool ofxTimer::stop() {
-    if(bAlive()) {
-        timer->isRunning = false;
-        ofxTimerSystem::removeTimer(this);
-        timer = NULL;
-    }
+inline void ofxTimer::resume() {
+    return wrapper->resume();
 }
 
-bool ofxTimer::pause() {
-    if(bAlive()) {
-        timer->isRunning = false;
-        timer->remainTime = timer->startTime + timer->fireDuration - ofGetElapsedTimeMillis();
-    }
+inline void ofxTimer::restart() {
+    return wrapper->restart();
 }
 
-bool ofxTimer::resume() {
-    if(bAlive()) {
-        timer->startTime = ofGetElapsedTimeMillis() - timer->remainTime;
-    }
-}
-
-bool ofxTimer::restart() {
-    if(bAlive()) {
-        timer->isRunning = true;
-        timer->startTime = ofGetElapsedTimeMillis();
-    }
-}
-
-bool ofxTimer::fire(unsigned long long currentTime) {
-    mute = false;
-    return bAlive() && timer->fire(currentTime);
-}
-
-
-void ofxTimer::clean() {
-    mute = true;
-    timer->isRunning = false;
-    delete timer;
-    timer = NULL;
-    mute = false;
+void ofxTimer::clearTimer() {
+    if(wrapper) wrapper->stop();
+    wrapper.reset();
 }

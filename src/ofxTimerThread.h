@@ -1,26 +1,26 @@
 //
-//  ofxSetTimeoutThread.h
+//  ofxTimerThread.h
 //
 //  Created by ISHII 2bit.
 //
 //
 
-#ifndef __ofxSetTimeoutThread__
-#define __ofxSetTimeoutThread__
+#ifndef __ofxTimerThread__
+#define __ofxTimerThread__
 
 #include "ofMain.h"
-#include "ofxTimer.h"
+#include "ofxTimerModule.h"
 
 template <class Class>
-class ofxTimerThreadFunctionWithClass : public ofxTimerModule {
+class ofxTimerThreadWithFunctionAndClass : public ofxTimerModule {
 public:
     friend class ofxTimerCycle;
-    ofxTimerThreadFunctionWithClass(Class *c, void (Class::*func)(), unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce) {
+    ofxTimerThreadWithFunctionAndClass(Class *c, void (Class::*func)(), unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce) {
         this->c = c;
         this->func = func;
     }
     
-    virtual ~ofxTimerThreadFunctionWithClass() {};
+    virtual ~ofxTimerThreadWithFunctionAndClass() {};
     virtual void fireBody() {
         (c->*func)();
     }
@@ -51,5 +51,9 @@ private:
     void (Class::*func)(Argument *);
     Argument *arg;
 };
+
+#if __has_extension(blocks)
+// TODO: add blocks version
+#endif
 
 #endif /* defined(__ofxSetTimeoutThread__) */

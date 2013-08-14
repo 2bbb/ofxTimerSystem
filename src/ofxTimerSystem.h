@@ -11,18 +11,30 @@
 #include "ofMain.h"
 #include "ofxTimer.h"
 
+class ofxTimerModule;
+class ofxTimerModuleWrapper;
+
 class ofxTimerSystem : public ofThread {
-    typedef vector<ofxTimerRef> Timers;
+    typedef ofPtr<ofxTimerModuleWrapper> ofxTimerModuleWrapperRef;
+    typedef vector<ofxTimerModuleWrapperRef> Timers;
+    
+    friend ofxTimerModule;
+    friend ofxTimerModuleWrapper;
+    friend ofxTimer;
 public:
-    static void addTimer(ofxTimerRef timer);
-    static void removeTimer(ofxTimerRef timer);
-    static void removeTimer(ofxTimer *timer);
     void threadedFunction();
 private:
     ofxTimerSystem();
+    static void addTimer(ofxTimerModuleWrapperRef timer);
+    void addTimerWithLock(ofxTimerModuleWrapperRef timer);
+    static void removeTimer(ofxTimerModuleWrapperRef timer);
+    static void removeTimer(ofxTimerModuleWrapper *timer);
+    void removeTimerWithLock(ofxTimerModuleWrapper *timer);
     static ofxTimerSystem *sharedInstance;
     static Timers timers;
 };
 
+#include "ofxSetTimeout.h"
+#include "ofxSetInterval.h"
 
 #endif /* defined(__ofxTimerSystem__) */

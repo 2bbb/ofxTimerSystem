@@ -8,7 +8,7 @@ void testApp::timeoutFunction1() {
 void testApp::timeoutFunction2(Arg *arg) {
     arg->state += 1;
     arg->state = arg->state % 4;
-    ofxSetInterval(this, &testApp::timeoutFunction1, 10);
+    t = ofxSetInterval(this, &testApp::timeoutFunction1, 10);
 }
 
 //--------------------------------------------------------------
@@ -18,7 +18,7 @@ void testApp::setup(){
     state = 0;
     ofxSetTimeout(this, &testApp::timeoutFunction1, 500);
     ofxSetTimeout(this, &testApp::timeoutFunction1, 1000);
-    t = ofxSetTimeout(this, &testApp::timeoutFunction2, new Arg(state), 1500);
+    ofxSetTimeout(this, &testApp::timeoutFunction2, new Arg(state), 1500);
     ofBackground(0, 0, 0);
 }
 
@@ -48,7 +48,7 @@ void testApp::draw(){
 
 //--------------------------------------------------------------
 void testApp::keyPressed(int key){
-    if(key == ' ') t.reset();
+    if(key == ' ') t.clearTimer();
 }
 
 //--------------------------------------------------------------

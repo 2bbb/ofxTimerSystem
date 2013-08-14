@@ -1,8 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxSetTimeout.h"
-#include "ofxSetInterval.h"
+#include "ofxTimerSystem.h"
 
 class Arg {
 public:
@@ -30,9 +29,5 @@ private:
     void timeoutFunction1();
     void timeoutFunction2(Arg *arg);
     int state;
-    ofxTimerRef t;
+    ofxTimer t;
 };
-
-static void timeoutFunction3() {
-    cout << "foo" << endl;
-}
