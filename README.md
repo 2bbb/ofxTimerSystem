@@ -12,6 +12,7 @@ __TODO__
 * if your system can use C++11 lambda, then you can use lambda type is  _std::function<void(void)>_ .
 	* but, i only tested in LLVM clang.
 	* and of0.8 in Xcode, if we use -std=c++11 then maybe we will get error at "ofTypes.h"…
+	* let's show __https://github.com/openframeworks/openFrameworks/issues/2335__
 	* if you will get error with other environment, let's try to edit the blocks of __\# \_\_has\_feature(cxx\_lambdas)__  in "ofxTimerModule.h".
 
 
