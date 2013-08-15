@@ -70,8 +70,21 @@ private:
 
 #endif
 
-// #if __has_feature(cxx_lambdas)
-// TODO: add C++11 lambda version
-// #endif
+#if __has_feature(cxx_lambdas)
+
+class ofxTimerThreadWithLambda : public ofxTimerModule {
+public:
+    ofxTimerThreadWithLambda(ofxTimerLambda lambda, unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce) {
+        this->lambda = lambda;
+    }
+    
+    virtual void fireBody() {
+        lambda();
+    }
+private:
+    ofxTimerLambda lambda;
+};
+
+#endif
 
 #endif /* defined(__ofxSetTimeoutThread__) */

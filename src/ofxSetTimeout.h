@@ -41,6 +41,15 @@ static ofxTimer ofxSetTimeout(ofxTimerBlocks blocks,
 
 #endif
 
-// TODO: add C++11 lambda version
+#if __has_feature(cxx_lambdas)
+
+static ofxTimer ofxSetTimeout(ofxTimerLambda lambda,
+                              unsigned long long fire)
+{
+    ofxTimerModule *module = new ofxTimerThreadWithLambda(lambda, fire);
+    return createTimerFromModule(module);
+}
+
+#endif
 
 #endif /* defined(__ofxSetTimeout__) */

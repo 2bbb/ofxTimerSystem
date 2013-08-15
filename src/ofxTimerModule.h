@@ -61,4 +61,12 @@ ofxTimer createTimerFromModule(ofxTimerModule *module);
 typedef void (^ofxTimerBlocks)(void);
 #endif
 
+#if __has_feature(cxx_lambdas)
+
+#include <tr1/functional>
+using std::tr1::function;
+typedef function<void(void)> ofxTimerLambda;
+
+#endif
+
 #endif /* defined(__ofxSetTimeoutExample__ofxTimer__) */
