@@ -55,4 +55,10 @@ private:
 
 typedef ofPtr<ofxTimerModuleWrapper> ofxTimerModuleWrapperRef;
 
+ofxTimer createTimerFromModule(ofxTimerModule *module);
+
+#if __has_extension(blocks)
+typedef void (^ofxTimerBlocks)(void);
+#endif
+
 #endif /* defined(__ofxSetTimeoutExample__ofxTimer__) */

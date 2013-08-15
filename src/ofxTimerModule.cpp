@@ -110,3 +110,9 @@ void ofxTimerModuleWrapper::clean() {
         timer = NULL;
     }
 }
+
+ofxTimer createTimerFromModule(ofxTimerModule *module) {
+    ofxTimerModuleWrapperRef wrapper = ofxTimerModuleWrapperRef(new ofxTimerModuleWrapper(module));
+    ofxTimer timer(wrapper);
+    return timer;
+}

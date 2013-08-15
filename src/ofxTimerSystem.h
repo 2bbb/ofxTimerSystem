@@ -11,6 +11,9 @@
 #include "ofMain.h"
 #include "ofxTimer.h"
 
+#include "ofxSetTimeout.h"
+#include "ofxSetInterval.h"
+
 class ofxTimerModule;
 class ofxTimerModuleWrapper;
 
@@ -33,8 +36,5 @@ private:
     static ofxTimerSystem *sharedInstance;
     static Timers timers;
 };
-
-#include "ofxSetTimeout.h"
-#include "ofxSetInterval.h"
 
 #endif /* defined(__ofxTimerSystem__) */

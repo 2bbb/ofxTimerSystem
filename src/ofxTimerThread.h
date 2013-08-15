@@ -54,6 +54,24 @@ private:
 
 #if __has_extension(blocks)
 // TODO: add blocks version
+
+class ofxTimerThreadWithBlocks : public ofxTimerModule {
+public:
+    ofxTimerThreadWithBlocks(ofxTimerBlocks blocks, unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce) {
+        this->blocks = blocks;
+    }
+    
+    virtual void fireBody() {
+        blocks();
+    }
+private:
+    ofxTimerBlocks blocks;
+};
+
 #endif
+
+// #if __has_feature(cxx_lambdas)
+// TODO: add C++11 lambda version
+// #endif
 
 #endif /* defined(__ofxSetTimeoutThread__) */

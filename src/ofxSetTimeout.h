@@ -17,8 +17,7 @@ ofxTimer ofxSetTimeout(Class *c,
                        unsigned long long fire)
 {
     ofxTimerModule *module = new ofxTimerThreadWithFunctionAndClass<Class>(c, func, fire);
-    ofxTimerModuleWrapperRef timer = ofxTimerModuleWrapperRef(new ofxTimerModuleWrapper(module));
-    return timer;
+    return createTimerFromModule(module);
 }
 
 template <class Class, class Argument>
@@ -28,12 +27,20 @@ ofxTimer ofxSetTimeout(Class *c,
                        unsigned long long fire)
 {
     ofxTimerModule *module = new ofxTimerThreadWithClassAndArguments<Class, Argument>(c, func, arg, fire);
-    ofxTimerModuleWrapperRef timer = ofxTimerModuleWrapperRef(new ofxTimerModuleWrapper(module));
-    return timer;
+    return createTimerFromModule(module);
 }
 
 #if __has_extension(blocks)
-// TODO: add blocks version
+
+static ofxTimer ofxSetTimeout(ofxTimerBlocks blocks,
+                       unsigned long long fire)
+{
+    ofxTimerModule *module = new ofxTimerThreadWithBlocks(blocks, fire);
+    return createTimerFromModule(module);
+}
+
 #endif
+
+// TODO: add C++11 lambda version
 
 #endif /* defined(__ofxSetTimeout__) */
