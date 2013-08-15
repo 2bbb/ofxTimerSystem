@@ -17,7 +17,11 @@ ofxTimerCore::~ofxTimerCore() {
 #endif
 }
 
-ofxTimer createTimerFromCore(ofxTimerCore *core, unsigned int fireDuration, unsigned long long startTime, bool isOnce) {
+ofxTimer createTimerFromCore(ofxTimerCore *core,
+                             unsigned int fireDuration,
+                             unsigned long long startTime,
+                             bool isOnce)
+{
     ofxTimerModuleRef module = ofxTimerModuleRef(new ofxTimerModule(core, fireDuration, startTime, isOnce));
     ofxTimer timer(module);
     return timer;
