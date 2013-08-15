@@ -23,9 +23,12 @@ void testApp::setup(){
     
 #if __has_extension(blocks)
     blocksBindValue = false;
-    ofxSetTimeout(Block_copy(^{
-        blocksBindValue = true;
-    }), 2000);
+    ofxSetTimeout(Block_copy(^{ blocksBindValue = true; }), 2000);
+#endif
+    
+#if __has_feature(cxx_lambdas)
+    lambdaBindValue = false;
+    ofxSetTimeout([&](){ lambdaBindValue = true; }, 5000);
 #endif
 }
 
@@ -55,6 +58,14 @@ void testApp::draw(){
     if(blocksBindValue) {
         for(int i = 0; i < 200; i++) {
             ofLine(ofRandomWidth(), ofRandomHeight(), ofRandomWidth(), ofRandomHeight());
+        }
+    }
+#endif
+    
+#if __has_feature(cxx_lambdas)
+    if(lambdaBindValue) {
+        for(int i = 0; i < 200; i++) {
+            ofCircle(ofRandomWidth(), ofRandomHeight(), ofRandom(10, 20));
         }
     }
 #endif

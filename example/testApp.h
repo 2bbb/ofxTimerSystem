@@ -35,4 +35,9 @@ private:
 #if __has_extension(blocks)
     bool blocksBindValue;
 #endif
+    
+#if __has_feature(cxx_lambdas)
+    bool lambdaBindValue;
+#endif
+
 };
