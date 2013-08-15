@@ -5,15 +5,22 @@
 //
 //
 
-#include "ofxTimerModuleSubclasses.h"
 #include "ofxTimerSystem.h"
+#include "ofxTimerCore.h"
+#include "ofxTimerCoreSubclasses.h"
+#include "ofxTimerModule.h"
 
-#pragma mark ofxTimerModule
+ofxTimerModule::ofxTimerModule() {
+    this->core = NULL;
+}
 
-ofxTimerModule::ofxTimerModule(unsigned int fireDuration,
+ofxTimerModule::ofxTimerModule(ofxTimerCore *core,
+                               unsigned int fireDuration,
                                unsigned long long startTime,
                                bool isOnce)
 {
+    this->core = core;
+    
     this->fireDuration = fireDuration;
     this->remainTime = fireDuration;
     this->startTime = startTime;
@@ -22,102 +29,96 @@ ofxTimerModule::ofxTimerModule(unsigned int fireDuration,
     this->isDead = false;
 }
 
-ofxTimerModule::~ofxTimerModule() {}
+ofxTimerModule::ofxTimerModule(const ofxTimerModule &t) {
+    this->core = t.core;
+    
+    this->fireDuration = t.fireDuration;
+    this->remainTime = t.fireDuration;
+    this->startTime = t.startTime;
+    this->isOnce = t.isOnce;
+    this->isRunning = t.isRunning;
+    this->isDead = t.isDead;
+    
+}
+
+ofxTimerModule::~ofxTimerModule() {
+#ifdef OFX_TIMER_SYSTEM_DEBUG
+    ofLogNotice() << "module is destructed";
+#endif
+}
+
+ofxTimerModule &ofxTimerModule::operator=(const ofxTimerModule &t) {
+    this->core = t.core;
+    
+    this->fireDuration = t.fireDuration;
+    this->remainTime = t.fireDuration;
+    this->startTime = t.startTime;
+    this->isOnce = t.isOnce;
+    this->isRunning = t.isRunning;
+    this->isDead = t.isDead;
+    
+    return *this;
+}
+
+bool ofxTimerModule::bAlive() const {
+    return !isDead;
+};
+
+
+void ofxTimerModule::stop() {
+    ofxTimerSystem::sharedInstance->lock();
+    if(bAlive()) {
+        isRunning = false;
+        isDead = true;
+        delete core;
+        core = NULL;
+    }
+    ofxTimerSystem::sharedInstance->unlock();
+}
+
+void ofxTimerModule::pause() {
+    ofxTimerSystem::sharedInstance->lock();
+    if(bAlive()) {
+        isRunning = false;
+        remainTime = startTime + fireDuration - ofGetElapsedTimeMillis();
+    }
+    ofxTimerSystem::sharedInstance->unlock();
+}
+
+void ofxTimerModule::resume() {
+    ofxTimerSystem::sharedInstance->lock();
+    if(bAlive()) {
+        startTime = ofGetElapsedTimeMillis() - remainTime;
+    }
+    ofxTimerSystem::sharedInstance->unlock();
+}
+
+void ofxTimerModule::restart() {
+    ofxTimerSystem::sharedInstance->lock();
+    if(bAlive()) {
+        isRunning = true;
+        startTime = ofGetElapsedTimeMillis();
+    }
+    ofxTimerSystem::sharedInstance->unlock();
+}
 
 void ofxTimerModule::fire(unsigned long long &currentTime) {
     bool isFired = false;
     if(isRunning && (startTime + fireDuration <= currentTime)) {
-        fireBody();
+        core->fireBody();
         isFired = true;
         startTime = currentTime;
-        
-        if(isOnce && isFired) {
-            isDead = true;
-        }
+    }
+    if(isOnce && isFired) {
+        isDead = true;
     }
 }
 
-#pragma mark -
-
-#pragma mark ofxTimerModuleWrapper
-
-ofxTimerModuleWrapper::ofxTimerModuleWrapper() {
-    this->timer = NULL;
-}
-
-ofxTimerModuleWrapper::ofxTimerModuleWrapper(ofxTimerModule *timer) {
-    this->timer = timer;
-}
-
-ofxTimerModuleWrapper::ofxTimerModuleWrapper(const ofxTimerModuleWrapper &t) {
-    this->timer = t.timer;
-}
-
-ofxTimerModuleWrapper::~ofxTimerModuleWrapper() {
-}
-
-ofxTimerModuleWrapper &ofxTimerModuleWrapper::operator=(const ofxTimerModuleWrapper &t) {
-    this->timer = t.timer;
-    return *this;
-}
-
-bool ofxTimerModuleWrapper::bAlive() const {
-    return !timer->isDead;
-};
-
-
-void ofxTimerModuleWrapper::stop() {
-    ofxTimerSystem::sharedInstance->lock();
-    if(bAlive()) {
-        timer->isRunning = false;
-        timer->isDead = true;
-        delete timer;
-        timer = NULL;
+void ofxTimerModule::clean() {
+    if(core) {
+        isRunning = false;
+        isDead = true;
+        delete core;
+        core = NULL;
     }
-    ofxTimerSystem::sharedInstance->unlock();
-}
-
-void ofxTimerModuleWrapper::pause() {
-    ofxTimerSystem::sharedInstance->lock();
-    if(bAlive()) {
-        timer->isRunning = false;
-        timer->remainTime = timer->startTime + timer->fireDuration - ofGetElapsedTimeMillis();
-    }
-    ofxTimerSystem::sharedInstance->unlock();
-}
-
-void ofxTimerModuleWrapper::resume() {
-    ofxTimerSystem::sharedInstance->lock();
-    if(bAlive()) {
-        timer->startTime = ofGetElapsedTimeMillis() - timer->remainTime;
-    }
-    ofxTimerSystem::sharedInstance->unlock();
-}
-
-void ofxTimerModuleWrapper::restart() {
-    ofxTimerSystem::sharedInstance->lock();
-    if(bAlive()) {
-        timer->isRunning = true;
-        timer->startTime = ofGetElapsedTimeMillis();
-    }
-    ofxTimerSystem::sharedInstance->unlock();
-}
-
-void ofxTimerModuleWrapper::fire(unsigned long long currentTime) {
-    if(timer != NULL && !timer->isDead) timer->fire(currentTime);
-}
-
-void ofxTimerModuleWrapper::clean() {
-    if(timer) {
-        timer->isRunning = false;
-        timer->isDead = true;
-        delete timer;
-        timer = NULL;
-    }
-}
-
-ofxTimer createTimerFromModule(ofxTimerModule *module) {
-    ofxTimerModuleWrapperRef wrapper = ofxTimerModuleWrapperRef(new ofxTimerModuleWrapper(module));
-    ofxTimer timer(wrapper);
-    return timer;
 }

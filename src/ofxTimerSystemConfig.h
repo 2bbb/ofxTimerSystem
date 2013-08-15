@@ -26,4 +26,6 @@ typedef function<void(void)> ofxTimerLambda;
 
 #endif
 
+#define OFX_TIMER_SYSTEM_DEBUG (1)
+
 #endif

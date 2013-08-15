@@ -14,25 +14,25 @@
 #include "ofxTimer.h"
 #include "ofxTimerSystemFunctions.h"
 
+class ofxTimerCore;
 class ofxTimerModule;
-class ofxTimerModuleWrapper;
 
 class ofxTimerSystem : public ofThread {
-    typedef ofPtr<ofxTimerModuleWrapper> ofxTimerModuleWrapperRef;
-    typedef vector<ofxTimerModuleWrapperRef> Timers;
+    typedef ofPtr<ofxTimerModule> ofxTimerModuleRef;
+    typedef vector<ofxTimerModuleRef> Timers;
     
+    friend ofxTimerCore;
     friend ofxTimerModule;
-    friend ofxTimerModuleWrapper;
     friend ofxTimer;
 public:
     void threadedFunction();
 private:
     ofxTimerSystem();
-    static void addTimer(ofxTimerModuleWrapperRef timer);
-    void addTimerWithLock(ofxTimerModuleWrapperRef timer);
-    static void removeTimer(ofxTimerModuleWrapperRef timer);
-    static void removeTimer(ofxTimerModuleWrapper *timer);
-    void removeTimerWithLock(ofxTimerModuleWrapper *timer);
+    static void addTimer(ofxTimerModuleRef timer);
+    void addTimerWithLock(ofxTimerModuleRef timer);
+    static void removeTimer(ofxTimerModuleRef timer);
+    static void removeTimer(ofxTimerModule *timer);
+    void removeTimerWithLock(ofxTimerModule *timer);
     static ofxTimerSystem *sharedInstance;
     static Timers timers;
 };

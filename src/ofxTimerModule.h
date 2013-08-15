@@ -13,46 +13,30 @@
 #include "ofxTimerSystemConfig.h"
 
 class ofxTimerSystem;
-class ofxTimerModuleWrapper;
 class ofxTimer;
-
-#pragma mark ofxTimerModule
 
 class ofxTimerModule {
     friend ofxTimerSystem;
-    friend ofxTimerModuleWrapper;
+    friend ofxTimer;
 public:
-    ofxTimerModule(unsigned int fireDuration, unsigned long long startTime, bool isOnce);
+    ofxTimerModule(ofxTimerCore *core, unsigned int fireDuration, unsigned long long startTime, bool isOnce);
+    ofxTimerModule(const ofxTimerModule &t);
+    ofxTimerModule &operator=(const ofxTimerModule &t);
     virtual ~ofxTimerModule();
-protected:
+    
+private:
+    ofxTimerModule();
+    ofxTimerCore *core;
+    
+    void fire(unsigned long long &currentTime);
+    void clean();
+    
     unsigned long long startTime;
     unsigned int fireDuration;
     long long remainTime;
-    virtual void fireBody() = 0;
     bool isRunning;
     bool isOnce;
     bool isDead;
-    void fire(unsigned long long &currentTime);
-};
-
-#pragma mark -
-
-#pragma mark ofxTimerModuleWrapper
-
-class ofxTimerModuleWrapper {
-    friend ofxTimerSystem;
-    friend ofxTimer;
-public:
-    ofxTimerModuleWrapper(ofxTimerModule *timer);
-    ofxTimerModuleWrapper(const ofxTimerModuleWrapper &t);
-    ofxTimerModuleWrapper &operator=(const ofxTimerModuleWrapper &t);
-    virtual ~ofxTimerModuleWrapper();
-    
-private:
-    ofxTimerModuleWrapper();
-    void fire(unsigned long long currentTime);
-    void clean();
-    ofxTimerModule *timer;
     
     bool bAlive() const;
     void stop();
@@ -61,8 +45,6 @@ private:
     void restart();
 };
 
-typedef ofPtr<ofxTimerModuleWrapper> ofxTimerModuleWrapperRef;
-
-ofxTimer createTimerFromModule(ofxTimerModule *module);
+typedef ofPtr<ofxTimerModule> ofxTimerModuleRef;
 
 #endif /* defined(__ofxSetTimeoutExample__ofxTimer__) */

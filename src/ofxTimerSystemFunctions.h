@@ -11,7 +11,7 @@
 #include "ofxTimer.h"
 
 #include "ofxTimerSystemConfig.h"
-#include "ofxTimerModuleSubclasses.h"
+#include "ofxTimerCoreSubclasses.h"
 
 #pragma mark Class and Function
 
@@ -21,8 +21,8 @@ ofxTimer ofxSetTimer(Class *c,
                      unsigned long long fire,
                      bool isLoop)
 {
-    ofxTimerModule *module = new ofxTimerWithFunctionAndClass<Class>(c, func, fire, !isLoop);
-    return createTimerFromModule(module);
+    ofxTimerCore *core = new ofxTimerWithFunctionAndClass<Class>(c, func);
+    return createTimerFromCore(core, fire, ofGetElapsedTimeMillis(), !isLoop);
 }
 
 template <class Class>
@@ -52,8 +52,8 @@ ofxTimer ofxSetTimer(Class *c,
                      unsigned long long fire,
                      bool isLoop)
 {
-    ofxTimerModule *module = new ofxTimerWithClassAndArguments<Class, Argument>(c, func, arg, fire, !isLoop);
-    return createTimerFromModule(module);
+    ofxTimerCore *core = new ofxTimerWithClassAndArguments<Class, Argument>(c, func, arg);
+    return createTimerFromCore(core, fire, ofGetElapsedTimeMillis(), !isLoop);
 }
 
 template <class Class, class Argument>
@@ -84,8 +84,8 @@ static ofxTimer ofxSetTimer(ofxTimerBlocks blocks,
                             unsigned long long fire,
                             bool isLoop)
 {
-    ofxTimerModule *module = new ofxTimerWithBlocks(blocks, fire, !isLoop);
-    return createTimerFromModule(module);
+    ofxTimerCore *core = new ofxTimerWithBlocks(blocks);
+    return createTimerFromCore(core, fire, ofGetElapsedTimeMillis(), !isLoop);
 }
 
 static ofxTimer ofxSetInterval(ofxTimerBlocks blocks,
@@ -112,8 +112,8 @@ static ofxTimer ofxSetTimer(ofxTimerLambda lambda,
                             unsigned long long fire,
                             bool isLoop)
 {
-    ofxTimerModule *module = new ofxTimerWithLambda(lambda, fire, !isLoop);
-    return createTimerFromModule(module);
+    ofxTimerCore *core = new ofxTimerWithLambda(lambda);
+    return createTimerFromCore(core, fire, ofGetElapsedTimeMillis(), !isLoop);
 }
 
 static ofxTimer ofxSetInterval(ofxTimerLambda lambda,
