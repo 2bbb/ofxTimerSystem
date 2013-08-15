@@ -23,8 +23,8 @@ void testApp::setup(){
 #if __has_extension(blocks)
     blocksBindValue = false;
     
-    ofxSetInterval(Block_copy(^{
-        ofxSetInterval(Block_copy(^{
+    ofxSetTimeout(Block_copy(^{
+        t = ofxSetInterval(Block_copy(^{
             timeoutFunction1();
         }), 100);
     }), 2000);

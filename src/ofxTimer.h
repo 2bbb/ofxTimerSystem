@@ -13,13 +13,13 @@
 #include "ofxTimerSystemConfig.h"
 
 class ofxTimerSystem;
-class ofxTimerModuleWrapper;
+class ofxTimerModule;
 
 class ofxTimer {
-    typedef ofPtr<ofxTimerModuleWrapper> ofxTimerModuleWrapperRef;
+    typedef ofPtr<ofxTimerModule> ofxTimerModuleRef;
 public:
     ofxTimer();
-    ofxTimer(ofxTimerModuleWrapperRef wrapper);
+    ofxTimer(ofxTimerModuleRef module);
     ofxTimer &operator=(const ofxTimer &timer);
     
     bool bAlive() const;
@@ -30,7 +30,7 @@ public:
     
     void clearTimer();
 private:
-    ofxTimerModuleWrapperRef wrapper;
+    ofxTimerModuleRef module;
 };
 
 #endif /* defined(__ofxTimer__) */

@@ -1,23 +1,23 @@
 //
-//  ofxTimer.h
+//  ofxTimerCoreSubclasses.h
 //
 //  Created by ISHII 2bit.
 //
 //
 
-#ifndef __ofxTimerModuleSubclasses__
-#define __ofxTimerModuleSubclasses__
+#ifndef __ofxTimerCoreSubclasses__
+#define __ofxTimerCoreSubclasses__
 
 #include "ofMain.h"
 
 #include "ofxTimerSystemConfig.h"
-#include "ofxTimerModule.h"
+#include "ofxTimerCore.h"
 
 template <class Class>
-class ofxTimerWithFunctionAndClass : public ofxTimerModule {
+class ofxTimerWithFunctionAndClass : public ofxTimerCore {
 public:
     friend class ofxTimerCycle;
-    ofxTimerWithFunctionAndClass(Class *c, void (Class::*func)(), unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce) {
+    ofxTimerWithFunctionAndClass(Class *c, void (Class::*func)()) {
         this->c = c;
         this->func = func;
     }
@@ -32,10 +32,10 @@ private:
 };
 
 template <class Class, class Argument>
-class ofxTimerWithClassAndArguments : public ofxTimerModule {
+class ofxTimerWithClassAndArguments : public ofxTimerCore {
     friend class ofxTimerCycle;
 public:
-    ofxTimerWithClassAndArguments(Class *c, void (Class::*func)(Argument *), Argument *arg, unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce)  {
+    ofxTimerWithClassAndArguments(Class *c, void (Class::*func)(Argument *), Argument *arg)  {
         this->c = c;
         this->func = func;
         this->arg = arg;
@@ -56,9 +56,9 @@ private:
 
 #if OFX_TIMER_SYSTEM_ENABLE_BLOCKS
 
-class ofxTimerWithBlocks : public ofxTimerModule {
+class ofxTimerWithBlocks : public ofxTimerCore {
 public:
-    ofxTimerWithBlocks(ofxTimerBlocks blocks, unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce) {
+    ofxTimerWithBlocks(ofxTimerBlocks blocks) {
         this->blocks = blocks;
     }
     
@@ -73,9 +73,9 @@ private:
 
 #if OFX_TIMER_SYSTEM_ENABLE_LAMBDA
 
-class ofxTimerWithLambda : public ofxTimerModule {
+class ofxTimerWithLambda : public ofxTimerCore {
 public:
-    ofxTimerWithLambda(ofxTimerLambda lambda, unsigned long long fire, bool isOnce = true) : ofxTimerModule(fire, ofGetElapsedTimeMillis(), isOnce) {
+    ofxTimerWithLambda(ofxTimerLambda lambda) {
         this->lambda = lambda;
     }
     
@@ -88,4 +88,4 @@ private:
 
 #endif
 
-#endif /* defined(__ofxTimerModuleSubclasses__) */
+#endif /* defined(__ofxTimerCoreSubclasses__) */

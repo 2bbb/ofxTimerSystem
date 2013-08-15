@@ -12,29 +12,29 @@ ofxTimerSystem::ofxTimerSystem() {
     startThread(true, false);
 }
 
-void ofxTimerSystem::addTimer(ofxTimerModuleWrapperRef timer) {
+void ofxTimerSystem::addTimer(ofxTimerModuleRef timer) {
     if(sharedInstance == NULL) {
         sharedInstance = new ofxTimerSystem();
     }
     sharedInstance->addTimerWithLock(timer);
 }
 
-void ofxTimerSystem::addTimerWithLock(ofxTimerModuleWrapperRef timer) {
+void ofxTimerSystem::addTimerWithLock(ofxTimerModuleRef timer) {
     timers.push_back(timer);
 }
 
-void ofxTimerSystem::removeTimer(ofxTimerModuleWrapperRef timer) {
+void ofxTimerSystem::removeTimer(ofxTimerModuleRef timer) {
     removeTimer(timer.get());
 }
 
-void ofxTimerSystem::removeTimer(ofxTimerModuleWrapper *timer) {
+void ofxTimerSystem::removeTimer(ofxTimerModule *timer) {
     if(sharedInstance == NULL) {
         sharedInstance = new ofxTimerSystem();
     }
     sharedInstance->removeTimerWithLock(timer);
 }
 
-void ofxTimerSystem::removeTimerWithLock(ofxTimerModuleWrapper *timer) {
+void ofxTimerSystem::removeTimerWithLock(ofxTimerModule *timer) {
     Timers::iterator it = timers.begin();
     for(; it != timers.end(); it++) {
         if(it->get() == timer) {
@@ -57,7 +57,7 @@ void ofxTimerSystem::threadedFunction() {
             
             for(it = timers.begin(); it != timers.end(); it++) {
                 lock();
-                if((*it)->timer != NULL && !(*it)->bAlive()) {
+                if((*it)->core != NULL && !(*it)->bAlive()) {
                     (*it)->clean();
                     it = timers.erase(it);
                     if(it == timers.end()) break;

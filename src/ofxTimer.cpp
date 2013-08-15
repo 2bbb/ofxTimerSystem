@@ -6,42 +6,42 @@
 //
 
 #include "ofxTimer.h"
-#include "ofxTimerModuleSubclasses.h"
+#include "ofxTimerCore.h"
+#include "ofxTimerModule.h"
 #include "ofxTimerSystem.h"
 
-ofxTimer::ofxTimer() {
-}
+ofxTimer::ofxTimer() {}
 
-ofxTimer::ofxTimer(ofxTimerModuleWrapperRef _wrapper) {
-    wrapper = _wrapper;
-    ofxTimerSystem::addTimer(wrapper);
+ofxTimer::ofxTimer(ofxTimerModuleRef module) {
+    this->module = module;
+    ofxTimerSystem::addTimer(module);
 }
 
 ofxTimer &ofxTimer::operator=(const ofxTimer &timer) {
-    wrapper = timer.wrapper;
+    module = timer.module;
 }
 
 inline bool ofxTimer::bAlive() const {
-    return wrapper->timer != NULL;
+    return module->core != NULL;
 };
 
 inline void ofxTimer::stop() {
-    return wrapper->stop();
+    return module->stop();
 }
 
 inline void ofxTimer::pause() {
-    return wrapper->pause();
+    return module->pause();
 }
 
 inline void ofxTimer::resume() {
-    return wrapper->resume();
+    return module->resume();
 }
 
 inline void ofxTimer::restart() {
-    return wrapper->restart();
+    return module->restart();
 }
 
 void ofxTimer::clearTimer() {
-    if(wrapper) wrapper->stop();
-    wrapper.reset();
+    if(module) module->stop();
+    module.reset();
 }
