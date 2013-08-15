@@ -10,7 +10,10 @@
 
 #pragma mark ofxTimerModule
 
-ofxTimerModule::ofxTimerModule(unsigned int fireDuration, unsigned long long startTime, bool isOnce) {
+ofxTimerModule::ofxTimerModule(unsigned int fireDuration,
+                               unsigned long long startTime,
+                               bool isOnce)
+{
     this->fireDuration = fireDuration;
     this->remainTime = fireDuration;
     this->startTime = startTime;
@@ -19,8 +22,7 @@ ofxTimerModule::ofxTimerModule(unsigned int fireDuration, unsigned long long sta
     this->isDead = false;
 }
 
-ofxTimerModule::~ofxTimerModule() {
-}
+ofxTimerModule::~ofxTimerModule() {}
 
 void ofxTimerModule::fire(unsigned long long &currentTime) {
     bool isFired = false;
@@ -28,9 +30,10 @@ void ofxTimerModule::fire(unsigned long long &currentTime) {
         fireBody();
         isFired = true;
         startTime = currentTime;
-    }
-    if(isOnce && isFired) {
-        isDead = true;
+        
+        if(isOnce && isFired) {
+            isDead = true;
+        }
     }
 }
 
