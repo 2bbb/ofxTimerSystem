@@ -29,5 +29,10 @@ private:
     void timeoutFunction1();
     void timeoutFunction2(Arg *arg);
     int state;
+    
     ofxTimer t;
+
+#if __has_extension(blocks)
+    bool blocksBindValue;
+#endif
 };

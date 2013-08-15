@@ -20,6 +20,13 @@ void testApp::setup(){
     ofxSetTimeout(this, &testApp::timeoutFunction1, 1000);
     ofxSetTimeout(this, &testApp::timeoutFunction2, new Arg(state), 1500);
     ofBackground(0, 0, 0);
+    
+#if __has_extension(blocks)
+    blocksBindValue = false;
+    ofxSetTimeout(Block_copy(^{
+        blocksBindValue = true;
+    }), 2000);
+#endif
 }
 
 //--------------------------------------------------------------
@@ -44,6 +51,13 @@ void testApp::update(){
 
 //--------------------------------------------------------------
 void testApp::draw(){
+#if __has_extension(blocks)
+    if(blocksBindValue) {
+        for(int i = 0; i < 200; i++) {
+            ofLine(ofRandomWidth(), ofRandomHeight(), ofRandomWidth(), ofRandomHeight());
+        }
+    }
+#endif
 }
 
 //--------------------------------------------------------------
