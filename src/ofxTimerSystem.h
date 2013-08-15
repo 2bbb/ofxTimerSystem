@@ -9,10 +9,10 @@
 #define __ofxTimerSystem__
 
 #include "ofMain.h"
-#include "ofxTimer.h"
 
-#include "ofxSetTimeout.h"
-#include "ofxSetInterval.h"
+#include "ofxTimerSystemConfig.h"
+#include "ofxTimer.h"
+#include "ofxTimerSystemFunctions.h"
 
 class ofxTimerModule;
 class ofxTimerModuleWrapper;

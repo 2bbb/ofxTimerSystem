@@ -5,7 +5,7 @@
 //
 //
 
-#include "ofxTimerModule.h"
+#include "ofxTimerModuleSubclasses.h"
 #include "ofxTimerSystem.h"
 
 #pragma mark ofxTimerModule
@@ -33,6 +33,8 @@ void ofxTimerModule::fire(unsigned long long &currentTime) {
         isDead = true;
     }
 }
+
+#pragma mark -
 
 #pragma mark ofxTimerModuleWrapper
 

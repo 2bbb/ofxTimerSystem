@@ -10,6 +10,8 @@
 
 #include "ofMain.h"
 
+#include "ofxTimerSystemConfig.h"
+
 class ofxTimerSystem;
 class ofxTimerModuleWrapper;
 

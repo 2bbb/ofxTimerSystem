@@ -6,7 +6,7 @@
 //
 
 #include "ofxTimer.h"
-#include "ofxTimerModule.h"
+#include "ofxTimerModuleSubclasses.h"
 #include "ofxTimerSystem.h"
 
 ofxTimer::ofxTimer() {

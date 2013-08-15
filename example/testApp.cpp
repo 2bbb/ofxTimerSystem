@@ -8,7 +8,6 @@ void testApp::timeoutFunction1() {
 void testApp::timeoutFunction2(Arg *arg) {
     arg->state += 1;
     arg->state = arg->state % 4;
-    t = ofxSetInterval(this, &testApp::timeoutFunction1, 10);
 }
 
 //--------------------------------------------------------------
@@ -23,6 +22,13 @@ void testApp::setup(){
     
 #if __has_extension(blocks)
     blocksBindValue = false;
+    
+    ofxSetInterval(Block_copy(^{
+        ofxSetInterval(Block_copy(^{
+            timeoutFunction1();
+        }), 100);
+    }), 2000);
+    
     ofxSetTimeout(Block_copy(^{ blocksBindValue = true; }), 2000);
 #endif
     

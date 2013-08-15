@@ -10,9 +10,13 @@
 
 #include "ofMain.h"
 
+#include "ofxTimerSystemConfig.h"
+
 class ofxTimerSystem;
 class ofxTimerModuleWrapper;
 class ofxTimer;
+
+#pragma mark ofxTimerModule
 
 class ofxTimerModule {
     friend ofxTimerSystem;
@@ -30,6 +34,10 @@ protected:
     bool isDead;
     void fire(unsigned long long &currentTime);
 };
+
+#pragma mark -
+
+#pragma mark ofxTimerModuleWrapper
 
 class ofxTimerModuleWrapper {
     friend ofxTimerSystem;
@@ -56,17 +64,5 @@ private:
 typedef ofPtr<ofxTimerModuleWrapper> ofxTimerModuleWrapperRef;
 
 ofxTimer createTimerFromModule(ofxTimerModule *module);
-
-#if __has_extension(blocks)
-typedef void (^ofxTimerBlocks)(void);
-#endif
-
-#if __has_feature(cxx_lambdas)
-
-#include <tr1/functional>
-using std::tr1::function;
-typedef function<void(void)> ofxTimerLambda;
-
-#endif
 
 #endif /* defined(__ofxSetTimeoutExample__ofxTimer__) */
